@@ -1,0 +1,40 @@
+{
+  "name": "mac-open-with",
+  "version": "1.0.0",
+  "description": "Open a file with an installed app on macOS",
+  "main": "index.js",
+  "repository": "https://github.com/karaggeorge/mac-open-with",
+  "author": {
+    "name": "George Karagkiaouris",
+    "email": "gkaragkiaouris2@gmail.com",
+    "url": "https://gkaragkiaouris.tech"
+  },
+  "license": "MIT",
+  "private": false,
+  "scripts": {
+		"test": "xo && ava",
+		"build": "swift build --configuration=release && mv .build/release/open-with .",
+		"prepublish": "npm run build"
+	},
+  "dependencies": {
+    "electron-util": "^0.12.1",
+    "execa": "^2.0.4"
+  },
+  "devDependencies": {
+    "ava": "^2.3.0",
+    "xo": "^0.24.0"
+  },
+  "files": [
+		"index.js",
+		"open-with"
+	],
+	"keywords": [
+		"macos",
+		"swift",
+		"open",
+		"with"
+  ],
+  "engines": {
+		"node": ">=8"
+	}
+}
