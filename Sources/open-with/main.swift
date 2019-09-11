@@ -1,6 +1,8 @@
 import Cocoa
 
 switch CLI.arguments.first {
+  case "apps-for-extension":
+    print(OpenWith.urlsForAppsThatOpenExtension(CLI.arguments[1]))
   case "apps-for-file":
     print(OpenWith.urlsForAppsThatOpenFile(CLI.arguments[1]))
   case "apps-for-type":

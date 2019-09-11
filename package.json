@@ -12,7 +12,7 @@
   "license": "MIT",
   "private": false,
   "scripts": {
-		"test": "xo && ava",
+		"test": "xo",
 		"build": "swift build --configuration=release && mv .build/release/open-with .",
 		"prepublish": "npm run build"
 	},
@@ -21,7 +21,6 @@
     "execa": "^2.0.4"
   },
   "devDependencies": {
-    "ava": "^2.3.0",
     "xo": "^0.24.0"
   },
   "files": [

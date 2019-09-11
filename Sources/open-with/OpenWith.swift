@@ -1,20 +1,66 @@
 import Cocoa
 
 public struct OpenWith {
-  static func urlsForAppsThatOpenFile(_ filePath: String, role: LSRolesMask = [.viewer, .editor]) -> String {
+  static func urlsForAppsThatOpenFile(_ filePath: String, role: LSRolesMask = .all, withIcons: Bool = false) -> String {
     let url = NSURL.fileURL(withPath: filePath)
-    let typeIdentifier = url.typeIdentifier!
-    return urlsForAppsThatOpenType(typeIdentifier, role: role)
+    let appUrls = LSCopyApplicationURLsForURL(url as CFURL, .all)?.takeUnretainedValue() as? [URL] ?? []
+    let defaultAppUrl = LSCopyDefaultApplicationURLForURL(url as CFURL, .all, nil)?.takeUnretainedValue() as URL?
+
+    let appList = appUrls.map {
+      [
+        "url": $0.absoluteString,
+        "isDefault": $0.absoluteString.isEqual(defaultAppUrl!.absoluteString)
+      ]
+    }
+    return toJson(withIcons ? addIconsToAppList(appList) : appList)
   }
 
-  static func urlsForAppsThatOpenType(_ typeIdentifier: String, role: LSRolesMask = [.viewer, .editor]) -> String {
-    let returnValue = LSCopyAllRoleHandlersForContentType(typeIdentifier as CFString, role)?.takeUnretainedValue() as? [String] ?? []
-		return toJson(returnValue.compactMap { NSWorkspace.shared.urlForApplication(withBundleIdentifier: $0) })
+  static func urlsForAppsThatOpenType(_ typeIdentifier: String, role: LSRolesMask = .all, withIcons: Bool = false) -> String {
+    let appIdentifiers = LSCopyAllRoleHandlersForContentType(typeIdentifier as CFString, role)?.takeUnretainedValue() as? [String] ?? []
+    let defaultAppIdentifier = LSCopyDefaultRoleHandlerForContentType(typeIdentifier as CFString, role)?.takeUnretainedValue() as! String
+
+    let appList = appIdentifiers.map {
+      [
+        "url": NSWorkspace.shared.urlForApplication(withBundleIdentifier: $0)?.absoluteString,
+        "isDefault": $0.isEqual(defaultAppIdentifier)
+      ]
+    }
+    return toJson(withIcons ? addIconsToAppList(appList) : appList)
   }
 
-  static func toJson(_ urls: [URL]) -> String {
+  static func urlsForAppsThatOpenExtension(_ ext: String, role: LSRolesMask = .all, withIcons: Bool = false) -> String {
+    let directory = NSTemporaryDirectory();
+    let fileName = NSUUID().uuidString + "." + ext;
+    let fullUrl = NSURL.fileURL(withPathComponents: [directory, fileName]);
+
     do {
-      let data = urls.map { "\($0)" }
+      try "".write(to: fullUrl!, atomically: false, encoding: .utf8);
+    } catch {
+      return "[]"
+    }
+
+    return urlsForAppsThatOpenFile(fullUrl?.path as! String, role: role, withIcons: withIcons);
+  }
+
+  static func getIconFromAppUrl(_ url: String) -> String {
+    let icon = NSWorkspace.shared.icon(forFile: url).tiffRepresentation!
+    let bitmap = NSBitmapImageRep(data: icon);
+    let data = bitmap?.representation(using: .png, properties: [:]);
+    return "data:image/png;base64,\(data!.base64EncodedString())"
+  }
+
+  static func addIconsToAppList(_ appList: [[String:Any]]) -> [[String:Any]] {
+    return appList.map {
+      [
+        "url": $0["url"],
+        "isDefault": $0["isDefault"],
+        "icon": getIconFromAppUrl($0["url"] as! String)
+      ]
+    }
+  }
+
+  static func toJson(_ data: [[String:Any]]) -> String {
+    do {
       let jsonData = try JSONSerialization.data(withJSONObject: data, options: .prettyPrinted)
       let json = String(data: jsonData, encoding: String.Encoding.utf8)
       return json!
