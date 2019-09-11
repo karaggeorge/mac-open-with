@@ -17,32 +17,33 @@ const formatApps = appList => appList.filter(app => Boolean(app.url)).sort((a, b
 	return path.parse(a.url).name.localeCompare(path.parse(b.url).name);
 });
 
-exports.getAppsThatOpenFile = async filePath => {
+const callBinary = async (subCommand, argument) => {
 	try {
-		const {stdout} = await execa(binary, ['apps-for-file', path.resolve(filePath)]);
+		const {stdout} = await execa(binary, [subCommand, argument]);
 		return formatApps(JSON.parse(stdout));
 	} catch {
 		return [];
 	}
-};
+}
 
-exports.getAppsThatOpenType = async fileType => {
+const callBinarySync = (subCommand, argument) => {
 	try {
-		const {stdout} = await execa(binary, ['apps-for-type', fileType]);
+		const {stdout} = execa.sync(binary, [subCommand, argument]);
 		return formatApps(JSON.parse(stdout));
 	} catch {
 		return [];
 	}
-};
+}
 
-exports.getAppsThatOpenExtension = async ext => {
-	try {
-		const {stdout} = await execa(binary, ['apps-for-extension', ext]);
-		return formatApps(JSON.parse(stdout));
-	} catch {
-		return [];
-	}
-};
+exports.getAppsThatOpenFile = filePath => callBinary('apps-for-file', path.resolve(filePath));
+exports.getAppsThatOpenFile.sync = filePath => callBinarySync('apps-for-file', path.resolve(filePath));
+
+exports.getAppsThatOpenType = fileType => callBinary('apps-for-type', fileType);
+exports.getAppsThatOpenType.sync = fileType => callBinarySync('apps-for-type', fileType);
+
+exports.getAppsThatOpenExtension = ext => callBinary('apps-for-extension', ext);
+exports.getAppsThatOpenExtension.sync = ext => callBinarySync('apps-for-extension', ext);
+
 
 exports.openFileWithApp = (filePath, appUrl) => {
 	try {
