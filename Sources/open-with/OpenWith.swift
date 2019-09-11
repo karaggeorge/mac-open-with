@@ -1,7 +1,7 @@
 import Cocoa
 
 public struct OpenWith {
-  static func urlsForAppsThatOpenFile(_ filePath: String, role: LSRolesMask = .all, withIcons: Bool = false) -> String {
+  static func urlsForAppsThatOpenFile(_ filePath: String, role: LSRolesMask = .all, withIcons: Bool = true) -> String {
     let url = NSURL.fileURL(withPath: filePath)
     let appUrls = LSCopyApplicationURLsForURL(url as CFURL, .all)?.takeUnretainedValue() as? [URL] ?? []
     let defaultAppUrl = LSCopyDefaultApplicationURLForURL(url as CFURL, .all, nil)?.takeUnretainedValue() as URL?
@@ -15,7 +15,7 @@ public struct OpenWith {
     return toJson(withIcons ? addIconsToAppList(appList) : appList)
   }
 
-  static func urlsForAppsThatOpenType(_ typeIdentifier: String, role: LSRolesMask = .all, withIcons: Bool = false) -> String {
+  static func urlsForAppsThatOpenType(_ typeIdentifier: String, role: LSRolesMask = .all, withIcons: Bool = true) -> String {
     let appIdentifiers = LSCopyAllRoleHandlersForContentType(typeIdentifier as CFString, role)?.takeUnretainedValue() as? [String] ?? []
     let defaultAppIdentifier = LSCopyDefaultRoleHandlerForContentType(typeIdentifier as CFString, role)?.takeUnretainedValue() as! String
 
@@ -28,7 +28,7 @@ public struct OpenWith {
     return toJson(withIcons ? addIconsToAppList(appList) : appList)
   }
 
-  static func urlsForAppsThatOpenExtension(_ ext: String, role: LSRolesMask = .all, withIcons: Bool = false) -> String {
+  static func urlsForAppsThatOpenExtension(_ ext: String, role: LSRolesMask = .all, withIcons: Bool = true) -> String {
     let directory = NSTemporaryDirectory();
     let fileName = NSUUID().uuidString + "." + ext;
     let fullUrl = NSURL.fileURL(withPathComponents: [directory, fileName]);
