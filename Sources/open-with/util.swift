@@ -12,6 +12,34 @@ extension FileHandle: TextOutputStream {
 	}
 }
 
+extension NSImage {
+	func resize(w: Int, h: Int) -> NSImage? {
+		let size = NSMakeSize(CGFloat(w), CGFloat(h));
+		// Create a new rect with given width and height
+		let frame = NSMakeRect(0, 0, size.width, size.height)
+
+		// Get the best representation for the given size.
+		guard let rep = self.bestRepresentation(for: frame, context: nil, hints: nil) else {
+				return nil
+		}
+
+		// Create an empty image with the given size.
+		let img = NSImage(size: size)
+
+		// Set the drawing context and make sure to remove the focus before returning.
+		img.lockFocus()
+		defer { img.unlockFocus() }
+
+		// Draw the new image
+		if rep.draw(in: frame) {
+				return img
+		}
+
+		// Return nil in case something went wrong.
+		return nil
+	}
+}
+
 extension URL {
     var typeIdentifier: String? {
         return (try? resourceValues(forKeys: [.typeIdentifierKey]))?.typeIdentifier

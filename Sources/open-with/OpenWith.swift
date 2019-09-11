@@ -19,10 +19,13 @@ public struct OpenWith {
     let appIdentifiers = LSCopyAllRoleHandlersForContentType(typeIdentifier as CFString, role)?.takeUnretainedValue() as? [String] ?? []
     let defaultAppIdentifier = LSCopyDefaultRoleHandlerForContentType(typeIdentifier as CFString, role)?.takeUnretainedValue() as! String
 
-    let appList = appIdentifiers.map {
+    let appUrls = appIdentifiers.compactMap { NSWorkspace.shared.urlForApplication(withBundleIdentifier: $0)?.absoluteString }
+    let defaultAppUrl = NSWorkspace.shared.urlForApplication(withBundleIdentifier: defaultAppIdentifier)?.absoluteString
+
+    let appList = appUrls.map {
       [
-        "url": NSWorkspace.shared.urlForApplication(withBundleIdentifier: $0)?.absoluteString,
-        "isDefault": $0.isEqual(defaultAppIdentifier)
+        "url": $0,
+        "isDefault": $0.isEqual(defaultAppUrl)
       ]
     }
     return toJson(withIcons ? addIconsToAppList(appList) : appList)
@@ -43,8 +46,8 @@ public struct OpenWith {
   }
 
   static func getIconFromAppUrl(_ url: String) -> String {
-    let icon = NSWorkspace.shared.icon(forFile: url).tiffRepresentation!
-    let bitmap = NSBitmapImageRep(data: icon);
+    let icon = NSWorkspace.shared.icon(forFile: URL(string: url)?.path as! String).resize(w: 64, h: 64)?.tiffRepresentation!
+    let bitmap = NSBitmapImageRep(data: icon!);
     let data = bitmap?.representation(using: .png, properties: [:]);
     return "data:image/png;base64,\(data!.base64EncodedString())"
   }
