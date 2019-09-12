@@ -2,6 +2,8 @@
 
 > Open a file with an installed app on macOS
 
+Requires macOS 10.12 or later. macOS 10.13 or earlier needs to download the [Swift runtime support libraries](https://download.developer.apple.com/Developer_Tools/Swift_5_Runtime_Support_for_Command_Line_Tools/Swift_5_Runtime_Support_for_Command_Line_Tools.dmg).
+
 ## Install
 
 ```
@@ -43,36 +45,36 @@ openWith.open('/some/file.mov', apps[0]);
 
 #### `App`
 
-Object type returned by the following three methods
+Object type returned by the following three methods.
 
 ##### `app.url`: `string`
 
-The url of the application
+The URL of the app.
 
 ##### `app.isDefault`: `boolean`
 
-Wether this app is the default app for that file/content type/extension
+Whether this app is the default app for that file/content type/extension.
 
 ##### `app.icon`: `string`
 
-The icon of the application `base64` encoded
+The icon of the app `base64` encoded.
 
 #### `.getAppsThatOpenFile(filePath: string): App[]`
 
-Get a list of app urls that can open the file type of the given file.
+Get a list of app URLs that can open the file type of the given file.
 
 #### `.getAppsThatOpenType(fileType: string): App[]`
 
-Get a list of app urls that can open the given file type
+Get a list of app URLs that can open the given file type.
 
 `fileType` has to be a [Uniform Type Identifier](https://en.wikipedia.org/wiki/Uniform_Type_Identifier)
 
 #### `.getAppsThatOpenExtension(ext: string): App[]`
 
-Get a list of app urls that can open the given extension
+Get a list of app URLs that can open the given file extension.
 
 #### `.open(filePath: string, appUrl: string): boolean`
 
-Open the given file with the given app url. `appUrl` needs to be one of the urls returned from `getAppsThatOpenFile` or `getAppsThatOpenType`.
+Open the given file with the given app URL. `appUrl` needs to be one of the URLs returned from `getAppsThatOpenFile` or `getAppsThatOpenType`.
 
 Returns `true` if the file was successfully opened, `false` otherwise.
