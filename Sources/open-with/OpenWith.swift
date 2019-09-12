@@ -57,7 +57,8 @@ struct OpenWith {
   }
 
   static func getIconFromAppUrl(_ url: String) -> String {
-    let icon = NSWorkspace.shared.icon(forFile: url).resizing(to: CGSize(width: 64, height: 64))?.tiffRepresentation
+    let path = URL(string: url)?.path;
+    let icon = NSWorkspace.shared.icon(forFile: path!).resizing(to: CGSize(width: 64, height: 64))?.tiffRepresentation
     let bitmap = NSBitmapImageRep(data: icon!)
     let data = bitmap?.representation(using: .png, properties: [:])
     return "data:image/png;base64,\(data!.base64EncodedString())"
