@@ -13,7 +13,7 @@ extension FileHandle: TextOutputStream {
 }
 
 extension NSImage {
-  func resizing(to size: CGSize) -> Self? {
+  func resizing(to size: CGSize) -> NSImage? {
     // Create a new rect with given width and height.
     let frame = CGRect(origin: .zero, size: size)
 
@@ -23,7 +23,7 @@ extension NSImage {
     }
 
     // Create an empty image with the given size.
-    let image = Self(size: size)
+    let image = NSImage(size: size)
 
     // Set the drawing context and make sure to remove the focus before returning.
     image.lockFocus()
@@ -40,7 +40,7 @@ extension NSImage {
 
 extension URL {
     var typeIdentifier: String? {
-      (try? resourceValues(forKeys: [.typeIdentifierKey]))?.typeIdentifier
+      return (try? resourceValues(forKeys: [.typeIdentifierKey]))?.typeIdentifier
     }
 }
 

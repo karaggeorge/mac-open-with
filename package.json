@@ -18,7 +18,8 @@
   },
   "dependencies": {
     "electron-util": "^0.12.1",
-    "execa": "^2.0.4"
+    "execa": "^2.0.4",
+    "macos-version": "^5.2.0"
   },
   "devDependencies": {
     "xo": "^0.24.0"

@@ -2,12 +2,20 @@
 const path = require('path');
 const execa = require('execa');
 const electronUtil = require('electron-util/node');
+const macosVersion = require('macos-version');
 
 const binary = path.join(electronUtil.fixPathForAsarUnpack(__dirname), 'open-with');
+
+const isAlreadySorted = macosVersion.isGreaterThanOrEqualTo('10.15');
+const isSupported = macosVersion.isGreaterThanOrEqualTo('10.14.4');
 
 const formatApps = appList => appList.filter(app => Boolean(app.url)).sort((a, b) => {
 	if (a.isDefault !== b.isDefault) {
 		return b.isDefault - a.isDefault;
+	}
+
+	if (isAlreadySorted) {
+		return 0;
 	}
 
 	if (a.url.includes('Applications') !== b.url.includes('Applications')) {
@@ -18,6 +26,10 @@ const formatApps = appList => appList.filter(app => Boolean(app.url)).sort((a, b
 });
 
 const callBinary = async (subCommand, argument) => {
+	if (!isSupported) {
+		return [];
+	}
+
 	try {
 		const {stdout} = await execa(binary, [subCommand, argument]);
 		return formatApps(JSON.parse(stdout));
@@ -27,6 +39,10 @@ const callBinary = async (subCommand, argument) => {
 };
 
 const callBinarySync = (subCommand, argument) => {
+	if (!isSupported) {
+		return [];
+	}
+
 	try {
 		const {stdout} = execa.sync(binary, [subCommand, argument]);
 		return formatApps(JSON.parse(stdout));
@@ -45,6 +61,10 @@ exports.getAppsThatOpenExtension = fileExtension => callBinary('apps-for-extensi
 exports.getAppsThatOpenExtension.sync = fileExtension => callBinarySync('apps-for-extension', fileExtension);
 
 exports.openFileWithApp = (filePath, appUrl) => {
+	if (!isSupported) {
+		return false;
+	}
+
 	try {
 		execa.sync(binary, ['open', filePath, appUrl]);
 		return true;
