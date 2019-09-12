@@ -24,7 +24,7 @@ const callBinary = async (subCommand, argument) => {
 	} catch {
 		return [];
 	}
-}
+};
 
 const callBinarySync = (subCommand, argument) => {
 	try {
@@ -33,7 +33,7 @@ const callBinarySync = (subCommand, argument) => {
 	} catch {
 		return [];
 	}
-}
+};
 
 exports.getAppsThatOpenFile = filePath => callBinary('apps-for-file', path.resolve(filePath));
 exports.getAppsThatOpenFile.sync = filePath => callBinarySync('apps-for-file', path.resolve(filePath));
@@ -41,9 +41,8 @@ exports.getAppsThatOpenFile.sync = filePath => callBinarySync('apps-for-file', p
 exports.getAppsThatOpenType = fileType => callBinary('apps-for-type', fileType);
 exports.getAppsThatOpenType.sync = fileType => callBinarySync('apps-for-type', fileType);
 
-exports.getAppsThatOpenExtension = ext => callBinary('apps-for-extension', ext);
-exports.getAppsThatOpenExtension.sync = ext => callBinarySync('apps-for-extension', ext);
-
+exports.getAppsThatOpenExtension = fileExtension => callBinary('apps-for-extension', fileExtension);
+exports.getAppsThatOpenExtension.sync = fileExtension => callBinarySync('apps-for-extension', fileExtension);
 
 exports.openFileWithApp = (filePath, appUrl) => {
 	try {
