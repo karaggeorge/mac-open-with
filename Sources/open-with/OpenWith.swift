@@ -87,7 +87,7 @@ struct OpenWith {
     do {
       try NSWorkspace.shared.open(
         [URL(fileURLWithPath: filePath)],
-        withApplicationAt: URL(fileURLWithPath: appUrl),
+        withApplicationAt: URL(string: appUrl)!,
         configuration: [:]
       )
     } catch {
