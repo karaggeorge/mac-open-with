@@ -43,6 +43,38 @@ openWith.open('/some/file.mov', apps[0]);
 
 ### openWith
 
+#### `.getAppsThatOpenFile(filePath: string): Promise<App[]>`
+
+Get a list of app URLs that can open the file type of the given file.
+
+#### `.getAppsThatOpenFile.sync(filePath: string): App[]`
+
+Synchronous version of the method above.
+
+#### `.getAppsThatOpenType(fileType: string): Promise<App[]>`
+
+Get a list of app URLs that can open the given file type.
+
+`fileType` has to be a [Uniform Type Identifier](https://en.wikipedia.org/wiki/Uniform_Type_Identifier)
+
+#### `.getAppsThatOpenType.sync(fileType: string): App[]`
+
+Synchronous version of the method above.
+
+#### `.getAppsThatOpenExtension(extension: string): Promise<App[]>`
+
+Get a list of app URLs that can open the given file extension.
+
+#### `.getAppsThatOpenExtension.sync(extension: string): App[]`
+
+Synchronous version of the method above.
+
+#### `.open(filePath: string, appUrl: string): boolean`
+
+Open the given file with the given app URL. `appUrl` needs to be one of the URLs returned from `getAppsThatOpenFile` or `getAppsThatOpenType`.
+
+Returns `true` if the file was successfully opened, `false` otherwise.
+
 #### `App`
 
 Object type returned by the following three methods.
@@ -57,24 +89,4 @@ Whether this app is the default app for that file/content type/extension.
 
 ##### `app.icon`: `string`
 
-The icon of the app `base64` encoded.
-
-#### `.getAppsThatOpenFile(filePath: string): App[]`
-
-Get a list of app URLs that can open the file type of the given file.
-
-#### `.getAppsThatOpenType(fileType: string): App[]`
-
-Get a list of app URLs that can open the given file type.
-
-`fileType` has to be a [Uniform Type Identifier](https://en.wikipedia.org/wiki/Uniform_Type_Identifier)
-
-#### `.getAppsThatOpenExtension(ext: string): App[]`
-
-Get a list of app URLs that can open the given file extension.
-
-#### `.open(filePath: string, appUrl: string): boolean`
-
-Open the given file with the given app URL. `appUrl` needs to be one of the URLs returned from `getAppsThatOpenFile` or `getAppsThatOpenType`.
-
-Returns `true` if the file was successfully opened, `false` otherwise.
+The icon of the app in a `base64` encoded Data URL.
