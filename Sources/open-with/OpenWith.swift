@@ -83,11 +83,11 @@ struct OpenWith {
     }
   }
 
-  static func open(_ filePath: String, withAppAtUrl appUrl: String) {
+  static func open(_ filePath: String, withAppAtUrl appUrl: URL) {
     do {
       try NSWorkspace.shared.open(
         [URL(fileURLWithPath: filePath)],
-        withApplicationAt: URL(string: appUrl)!,
+        withApplicationAt: appUrl,
         configuration: [:]
       )
     } catch {
